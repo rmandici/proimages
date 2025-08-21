@@ -121,7 +121,7 @@ export default function Hero() {
                   "object-contain transition duration-300",
                   "md:grayscale md:hover:grayscale-0 md:opacity-80 md:hover:opacity-100",
                   // mărime diferită pt cele marcate `big`
-                  c.big ? "h-8 md:h-16" : "h-8 md:h-10",
+                  c.big ? "h-14 md:h-16" : "h-8 md:h-10",
                 ].join(" ")}
               />
             </a>

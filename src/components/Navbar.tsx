@@ -5,7 +5,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="absolute top-0 left-0 w-full z-50 bg-opacity-0 text-white">
+    <header className="fixed top-0 left-0 right-0 z-[1000] text-white">
       <div className="px-6 py-4 flex items-center justify-between w-full">
         {/* Titlu */}
         <div className=" text-xl font-bold">
@@ -15,14 +15,14 @@ const Navbar = () => {
 
         {/* Hamburger (mobil) */}
         <button
-          className="sm:hidden text-white text-2xl"
+          className="text-white text-2xl cursor-pointer"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           ☰
         </button>
 
         {/* Meniu Desktop */}
-        <nav className="hidden sm:flex space-x-6 text-white font-semibold">
+        {/* <nav className="hidden sm:flex space-x-6 text-white font-semibold">
           <Link to="/" className="hover:text-gray-300">
             Home
           </Link>
@@ -32,12 +32,12 @@ const Navbar = () => {
           <Link to="/contact" className="hover:text-gray-300">
             Contact
           </Link>
-        </nav>
+        </nav> */}
       </div>
 
       {/* Meniu Mobile */}
       {menuOpen && (
-        <div className="sm:hidden bg-black bg-opacity-90 text-white px-4 py-2 space-y-2 text-center">
+        <div className=" bg-black bg-opacity-90 text-white px-4 py-2 space-y-2 text-center ">
           <Link to="/" onClick={() => setMenuOpen(false)}>
             Home
           </Link>
