@@ -12,7 +12,7 @@ const CYCLE_MS = 3000;
 const SLIDE_IN_MS = 1000;
 const REVEAL_MS = 1800;
 const ZOOM_REVEAL_FROM = 1.02;
-const ZOOM_REVEAL_TO = 1.05;
+const ZOOM_REVEAL_TO = 1.0;
 
 type Phase = "enter" | "reveal" | null;
 
@@ -46,18 +46,12 @@ export default function Home() {
     });
   }, []);
 
-  const darkScale = !prefersReducedMotion
-    ? phase === "reveal"
-      ? ZOOM_REVEAL_TO
-      : ZOOM_REVEAL_FROM
-    : 1;
-
   return (
-    // fără `relative` pe section; mobil = 1/2 înălțime, desktop = full
-    <section className="w-full h-[50dvh] md:h-dvh overflow-hidden isolate">
-      {/* wrapper INTERN poziționat corect */}
-      <div className=" h-full w-full overflow-hidden">
-        {/* BAZA: iese prin stânga; face zoom-out la 1 pe durata tranziției */}
+    // fără `relative` pe section; mobil: jumătate din ecran, desktop: full
+    <section className=" w-full h-2/3 md:h-full overflow-hidden isolate">
+      {/* wrapper intern POZIȚIONAT (relative) ca referință pentru absolute */}
+      <div className=" h-2/3 md:h-full w-full overflow-hidden">
+        {/* BAZA: iese la stânga în faza ENTER; face zoom-out la 1 ca să nu fie mai mare decât overlay-ul */}
         <motion.div
           key={`base-wrap-${index}-${phase ?? "idle"}`}
           className="absolute inset-0 transform-gpu will-change-transform overflow-hidden"
@@ -79,10 +73,12 @@ export default function Home() {
             alt=""
             aria-hidden
             draggable={false}
-            className="absolute inset-0 h-2/3 md:h-full w-full object-cover select-none transform-gpu origin-center will-change-transform"
+            className="absolute inset-0 h-2/3 md:h-full w-full object-cover select-none transform-gpu will-change-transform"
             initial={{ scale: baseScale }}
+            // 👇 În timpul tranziției (enter/reveal) revenim la 1.0; altfel păstrăm baseScale
             animate={{ scale: phase ? 1 : baseScale }}
             transition={{
+              // zoom-out sincron cu slide-ul de intrare
               scale: {
                 duration: phase === "enter" ? SLIDE_IN_MS / 1000 : 0.001,
                 ease: [0.22, 1, 0.36, 1],
@@ -91,7 +87,7 @@ export default function Home() {
           />
         </motion.div>
 
-        {/* OVERLAY: poza nouă cu umbră (același scale ca la reveal, pentru aliniere perfectă) */}
+        {/* OVERLAY: poza nouă intră cu umbră */}
         {nextIdx !== null && (
           <motion.div
             key={`stage-${nextIdx}`}
@@ -107,27 +103,19 @@ export default function Home() {
                 setPhase("reveal");
             }}
           >
-            {/* strat ÎNTUNECAT sincronizat la scale */}
-            <motion.img
+            {/* strat întunecat (rămâne full) */}
+            <img
               src={IMAGES[nextIdx]}
               alt=""
               aria-hidden
               draggable={false}
-              className="absolute inset-0 h-2/3 md:h-full w-full object-cover select-none transform-gpu origin-center"
+              className="absolute inset-0 h-2/3 md:h-full w-full object-cover select-none transform-gpu"
               style={{
                 filter: prefersReducedMotion ? "none" : "brightness(0.65)",
               }}
-              initial={{ scale: darkScale }}
-              animate={{ scale: darkScale }}
-              transition={{
-                scale: {
-                  duration: phase === "reveal" ? REVEAL_MS / 1000 : 0.001,
-                  ease: [0.22, 1, 0.36, 1],
-                },
-              }}
             />
 
-            {/* REVEAL: aceeași poză fără umbră, wipe + zoom (dreapta → stânga) */}
+            {/* REVEAL: aceeași poză FĂRĂ umbră, wipe + zoom simultan (dreapta -> stânga) */}
             {!prefersReducedMotion && phase === "reveal" && (
               <motion.img
                 key={`wipe-${nextIdx}`}
@@ -135,7 +123,7 @@ export default function Home() {
                 alt=""
                 aria-hidden
                 draggable={false}
-                className="absolute inset-0 h-2/3 md:h-full w-full object-cover select-none transform-gpu origin-center"
+                className="absolute inset-0 h-2/3 md:h-full w-full object-cover select-none transform-gpu"
                 initial={{
                   clipPath: "inset(0% 0% 0% 100%)",
                   scale: ZOOM_REVEAL_FROM,
@@ -156,7 +144,7 @@ export default function Home() {
                 }}
                 onAnimationComplete={() => {
                   setIndex(nextIdx);
-                  setBaseScale(ZOOM_REVEAL_TO); // rămâne la același zoom
+                  setBaseScale(ZOOM_REVEAL_TO); // păstrăm zoom-ul atins
                   setNextIdx(null);
                   setPhase(null);
                 }}
@@ -172,9 +160,9 @@ export default function Home() {
                 alt=""
                 aria-hidden
                 draggable={false}
-                className="absolute inset-0 h-2/3 md:h-full w-full object-cover select-none transform-gpu origin-center"
-                initial={{ opacity: 0, scale: 1 }}
-                animate={{ opacity: 1, scale: 1 }}
+                className="absolute inset-0 h-2/3 md:h-full w-full object-cover select-none transform-gpu"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ duration: 0.4 }}
                 onAnimationComplete={() => {
                   setIndex(nextIdx);
