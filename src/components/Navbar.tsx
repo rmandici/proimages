@@ -8,9 +8,9 @@ const Navbar = () => {
     <header className="absolute top-0 left-0 w-full z-50 bg-opacity-0 text-white">
       <div className="px-6 py-4 flex items-center justify-between w-full">
         {/* Titlu */}
-        <div className="text-white text-xl font-bold">
-          PRO IMAGES
-          <div className="text-xs text-muted">Eduard Vinatoru</div>
+        <div className=" text-xl font-bold">
+          PROIMAGES
+          <div>Eduard Vinatoru</div>
         </div>
 
         {/* Hamburger (mobil) */}
