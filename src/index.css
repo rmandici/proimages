@@ -1,0 +1,57 @@
+/* Fonturi Google */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&family=Montserrat:wght@700&display=swap");
+
+/* Tailwind CSS */
+@import "tailwindcss";
+
+/* Variabile de culoare neutre */
+:root {
+  --color-black: #0e0e0e;
+  --color-gray-800: #1f1f1f;
+  --color-gray-500: #6b7280;
+  --color-white: #ffffff;
+  --color-border: #2d2d2d;
+}
+
+/* Stiluri de bază */
+@layer base {
+  html {
+    font-family: "Open Sans", sans-serif;
+    background-color: var(--color-white);
+    color: var(--color-black);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: "Montserrat", sans-serif;
+  }
+}
+
+/* Clase custom pentru Tailwind */
+@layer components {
+  .btn-dark {
+    @apply px-4 py-2 rounded font-semibold text-white;
+    background-color: var(--color-gray-800);
+  }
+
+  .btn-dark:hover {
+    background-color: var(--color-black);
+  }
+
+  .text-muted {
+    color: var(--color-gray-500);
+  }
+
+  .bg-dark {
+    background-color: var(--color-black);
+  }
+
+  .bg-gray-800 {
+    background-color: var(--color-gray-800);
+  }
+
+  .border-default {
+    border-color: var(--color-border);
+  }
+}
