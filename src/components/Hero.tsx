@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-type Collab = { name: string; href: string; logo: string };
+type Collab = { name: string; href: string; logo: string; big?: boolean };
 type WorkItem = {
   src: string;
   alt: string;
@@ -29,6 +29,7 @@ const COLLABS: Collab[] = [
     name: "INQUAM",
     href: "https://inquamphotos.com/",
     logo: "/logos/inq.png",
+    big: true,
   },
   {
     name: "Mediafax Foto",
@@ -39,6 +40,7 @@ const COLLABS: Collab[] = [
     name: "Business Mark",
     href: "https://business-mark.ro/",
     logo: "/logos/bmk.png",
+    big: true,
   },
 ];
 
@@ -114,7 +116,13 @@ export default function Hero() {
                 src={c.logo}
                 alt={`${c.name} logo`}
                 loading="lazy"
-                className="h-8 md:h-10 object-contain grayscale hover:grayscale-0 transition duration-300"
+                className={[
+                  // pe mobil: mereu color; pe desktop: grayscale la hover
+                  "object-contain transition duration-300",
+                  "md:grayscale md:hover:grayscale-0 md:opacity-80 md:hover:opacity-100",
+                  // mărime diferită pt cele marcate `big`
+                  c.big ? "h-8 md:h-16" : "h-8 md:h-10",
+                ].join(" ")}
               />
             </a>
           ))}

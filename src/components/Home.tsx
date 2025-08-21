@@ -50,9 +50,9 @@ export default function Home() {
   return (
     <>
       // fără `relative` pe section; mobil: jumătate din ecran, desktop: full
-      <section className=" w-full h-2/3 md:h-[90dvh] overflow-hidden isolate">
+      <section className=" w-full h-[66dvh] md:h-[90dvh] overflow-hidden isolate">
         {/* wrapper intern POZIȚIONAT (relative) ca referință pentru absolute */}
-        <div className=" h-2/3 md:h-[90dvh] w-full overflow-hidden">
+        <div className=" h-[66dvh] md:h-[90dvh] w-full overflow-hidden">
           {/* BAZA: iese la stânga în faza ENTER; face zoom-out la 1 ca să nu fie mai mare decât overlay-ul */}
           <motion.div
             key={`base-wrap-${index}-${phase ?? "idle"}`}
@@ -75,7 +75,7 @@ export default function Home() {
               alt=""
               aria-hidden
               draggable={false}
-              className="absolute inset-0 h-2/3 md:h-[90dvh] w-full object-cover select-none transform-gpu will-change-transform"
+              className="absolute inset-0 h-[66dvh] md:h-[90dvh] w-full object-cover select-none transform-gpu will-change-transform"
               initial={{ scale: baseScale }}
               // 👇 În timpul tranziției (enter/reveal) revenim la 1.0; altfel păstrăm baseScale
               animate={{ scale: phase ? 1 : baseScale }}
@@ -111,7 +111,7 @@ export default function Home() {
                 alt=""
                 aria-hidden
                 draggable={false}
-                className="absolute inset-0 h-2/3 md:h-[90dvh] w-full object-cover select-none transform-gpu"
+                className="absolute inset-0 h-[66dvh] md:h-[90dvh] w-full object-cover select-none transform-gpu"
                 style={{
                   filter: prefersReducedMotion ? "none" : "brightness(0.65)",
                 }}
@@ -125,7 +125,7 @@ export default function Home() {
                   alt=""
                   aria-hidden
                   draggable={false}
-                  className="absolute inset-0 h-2/3 md:h-[90dvh] w-full object-cover select-none transform-gpu"
+                  className="absolute inset-0 h-[66dvh] md:h-[90dvh] w-full object-cover select-none transform-gpu"
                   initial={{
                     clipPath: "inset(0% 0% 0% 100%)",
                     scale: ZOOM_REVEAL_FROM,
@@ -162,7 +162,7 @@ export default function Home() {
                   alt=""
                   aria-hidden
                   draggable={false}
-                  className="absolute inset-0 h-2/3 md:h-[90dvh] w-full object-cover select-none transform-gpu"
+                  className="absolute inset-0 h-[66dvh] md:h-[90dvh] w-full object-cover select-none transform-gpu"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.4 }}
