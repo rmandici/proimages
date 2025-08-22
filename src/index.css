@@ -11,6 +11,7 @@
   --color-gray-500: #6b7280;
   --color-white: #ffffff;
   --color-border: #2d2d2d;
+  --bg-muted: theme("colors.neutral.100");
 }
 
 /* Stiluri de bază */
@@ -35,6 +36,18 @@
     background-color: var(--color-gray-800);
   }
 
+  .container-tight {
+    @apply max-w-7xl mx-auto px-2 md:px-6;
+  } /* px-3=~12px */
+  .section-pad {
+    @apply pt-8 pb-8 md:pt-16 md:pb-16;
+  } /* padding vertical */
+  .gap-tight {
+    @apply gap-3 md:gap-8;
+  }
+  .card-pad {
+    @apply p-3 md:p-5;
+  }
   .btn-dark:hover {
     background-color: var(--color-black);
   }
@@ -54,4 +67,14 @@
   .border-default {
     border-color: var(--color-border);
   }
+  .bg-muted {
+    background-color: var(--bg-muted);
+  }
+}
+
+/* Elimină padding-ul global al containerului React */
+#root {
+  margin: 10px !important;
+  padding: 0 !important; /* ← asta scade „marginea verde” */
+  max-width: none !important; /* nu mai limitează lățimea aplicației */
 }

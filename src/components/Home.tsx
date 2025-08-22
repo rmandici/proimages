@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Hero from "./Hero";
+import Story from "./Story";
 
 // Focal point pe imagine (în procente). y mai mic = „urcă” cadrul.
 type Focus = { x: number; y: number; md?: { x: number; y: number } };
@@ -229,7 +230,7 @@ export default function Home() {
       {/* 🔽 Bară descriere – full-bleed, sincronizată cu poza */}
       <section
         className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]
-                   bg-neutral-100 text-neutral-900 overflow-hidden"
+                   bg-muted text-neutral-900 overflow-hidden"
         aria-live="polite"
       >
         {/* ca să nu sară înălțimea când se schimbă textul */}
@@ -308,8 +309,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* restul paginii */}
+      {/* Collab + Carduri */}
       <Hero />
+
+      {/* Rest work */}
+      <Story />
     </>
   );
 }

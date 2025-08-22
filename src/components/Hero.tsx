@@ -89,7 +89,7 @@ export default function Hero() {
   return (
     <section className="w-full bg-white">
       {/* Collaborations */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-16">
+      <div className="w-full pt-10 md:pt-16 mt-8 md:mt-12 bg-muted py-4 px-2 md:px-10">
         <motion.h2
           {...fadeUp}
           viewport={{ once: true, amount: 0.3 }}
@@ -101,7 +101,7 @@ export default function Hero() {
         <motion.div
           {...fadeUp}
           viewport={{ once: true, amount: 0.2 }}
-          className="mt-8 md:mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 md:gap-10 items-center justify-items-center"
+          className="mt-8 md:mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-tight md:gap-10 items-center justify-items-center"
         >
           {COLLABS.map((c) => (
             <a
@@ -130,7 +130,7 @@ export default function Hero() {
       </div>
 
       {/* Work */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-16 pb-10 md:pb-16">
+      <div className="container-tight section-pad">
         <motion.h2
           {...fadeUp}
           viewport={{ once: true, amount: 0.3 }}
@@ -151,16 +151,35 @@ export default function Hero() {
                     loading="lazy"
                     className="absolute inset-0 w-full h-full object-cover transform-gpu transition duration-500 group-hover:scale-[1.02]"
                   />
+
+                  {/* overlay GRADIENT + text (DESKTOP doar la hover) */}
+                  <div
+                    aria-hidden
+                    className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent
+                         opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div
+                    className="hidden md:flex absolute inset-x-0 bottom-0 p-5
+                         translate-y-3 opacity-0 group-hover:opacity-100 group-hover:translate-y-0
+                         transition-all duration-300"
+                  >
+                    <div className="text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
+                      <h3 className="text-lg font-semibold leading-snug">
+                        {w.title}
+                      </h3>
+                      {w.desc && (
+                        <p className="mt-1 text-sm text-white/90">{w.desc}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
-                {/* descrierea dedesubt */}
-                <div className="p-4 md:p-5">
-                  <h3 className="text-base md:text-lg font-semibold leading-snug">
+                {/* descriere SUB poză (MOBIL), ascunsă pe desktop */}
+                <div className="p-4 md:p-5 md:hidden">
+                  <h3 className="text-base font-semibold leading-snug">
                     {w.title}
                   </h3>
-                  <p className="mt-2 text-sm md:text-[15px] text-neutral-600">
-                    {w.desc}
-                  </p>
+                  <p className="mt-2 text-sm text-neutral-600">{w.desc}</p>
                 </div>
               </article>
             );
