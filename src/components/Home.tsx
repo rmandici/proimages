@@ -7,7 +7,7 @@ import Story from "./Story";
 type Focus = { x: number; y: number; md?: { x: number; y: number } };
 
 const FOCUS: Focus[] = [
-  { x: 85, y: 40, md: { x: 50, y: 10 } }, // image1.jpg
+  { x: 85, y: 50, md: { x: 50, y: 10 } }, // image1.jpg
   { x: 50, y: 50, md: { x: 50, y: 50 } }, // image2.jpg
   { x: 10, y: 35, md: { x: 50, y: 20 } }, // image3.jpg
 ];
@@ -26,22 +26,27 @@ const IMAGES = [
   "/images/image3.jpg",
 ];
 
-// 🔤 CAPS pentru fiecare imagine (schimbă-le după cum vrei)
-// const CAPTIONS: { title: string; desc?: string }[] = [
-//   {
-//     title: "Official visit at Cotroceni Palace",
-//     desc: "Press coverage & arrivals",
-//   },
-//   { title: "Field exercise with allied forces", desc: "Editorial selection" },
-//   { title: "Cristianoooo Ronaldoooooo", desc: "Siuuuuu" },
-// ];
-
-// —— Timings ——
-const CYCLE_MS = 3000;
+// —— Timings (carusel fluid) ——
+// pauza dintre tranziții, când imaginea stă pe loc
+const DWELL_MS = 1000;
+// intrarea gri (dreapta → 0) — accelerează (ease-in)
 const SLIDE_IN_MS = 1000;
-const REVEAL_MS = 1800;
-const ZOOM_REVEAL_FROM = 1.04;
+// reveal (wipe + zoom) — decelerează (ease-out)
+const REVEAL_MS = SLIDE_IN_MS;
+
+// zoom reveal de bază
+const ZOOM_REVEAL_FROM = 1.01;
 const ZOOM_REVEAL_TO = 1.1;
+
+const LEAD_MS = 60; // baza termină zoom-ul puțin înainte de intrare
+
+// zoom lent adițional, care continuă până la „ieșirea” imaginii
+const CONT_ZOOM_DELTA = 0.02; // ↑ mărește/lipsește cât vrei (0.015–0.03 e ok)
+const ENTER_SCALE = ZOOM_REVEAL_TO + CONT_ZOOM_DELTA;
+
+// easing-uri: accelerează → decelerează
+const EASE_IN: [number, number, number, number] = [0.75, 0, 1, 1]; // ease-in
+const EASE_OUT: [number, number, number, number] = [0, 0, 0.58, 1]; // ease-out stabil (fără overshoot)
 
 type Phase = "enter" | "reveal" | null;
 
@@ -62,22 +67,37 @@ export default function Home() {
   const [index, setIndex] = useState(0);
   const [nextIdx, setNextIdx] = useState<number | null>(null);
   const [phase, setPhase] = useState<Phase>(null);
-  const [baseScale, setBaseScale] = useState(1);
+  const [baseScale, setBaseScale] = useState(ZOOM_REVEAL_TO);
   const curRef = useRef(index);
   const prefersReducedMotion = useReducedMotion();
+
+  // scheduler cu timeout (nu interval), pentru control fin
+  const timerRef = useRef<number | null>(null);
+  const clearTimer = () => {
+    if (timerRef.current) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+  const scheduleNext = () => {
+    clearTimer();
+    timerRef.current =
+      window.setTimeout(() => {
+        const nxt = (curRef.current + 1) % IMAGES.length;
+        setNextIdx(nxt);
+        setPhase("enter");
+      }, DWELL_MS) + LEAD_MS;
+  };
 
   useEffect(() => {
     curRef.current = index;
   }, [index]);
 
-  // autoplay
+  // start ciclul la mount, cleanup la unmount
   useEffect(() => {
-    const id = setInterval(() => {
-      const nxt = (curRef.current + 1) % IMAGES.length;
-      setNextIdx(nxt);
-      setPhase("enter");
-    }, CYCLE_MS);
-    return () => clearInterval(id);
+    scheduleNext();
+    return () => clearTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // preload
@@ -90,17 +110,16 @@ export default function Home() {
 
   return (
     <>
-      {/* full-bleed, fără alb sus/lateral; 66dvh mobile / 90dvh desktop */}
+      {/* full-bleed, fără alb sus/lateral; mai scurt pe mobil ca să se vadă lățimea */}
       <section
-        className="relative w-screen h-[66dvh] md:h-[105dvh] overflow-hidden isolate
+        className="relative w-screen h-[40dvh] md:h-[105dvh] overflow-hidden isolate
                    left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]
                    [margin-block-start:-35px] bg-black"
       >
         {/* ancoră pentru absolute + înălțime fixă */}
         <div className="relative h-full w-full overflow-hidden">
-          {/* Baza */}
+          {/* Baza (continuă zoom lent până la exit) */}
           <motion.div
-            key={`base-wrap-${index}-${phase ?? "idle"}`}
             className="absolute inset-0 transform-gpu will-change-transform overflow-hidden"
             initial={{ x: "0%" }}
             animate={{
@@ -111,29 +130,35 @@ export default function Home() {
                 phase === "enter" && !prefersReducedMotion
                   ? SLIDE_IN_MS / 1000
                   : 0.001,
-              ease: [0.22, 1, 0.36, 1],
+              ease: EASE_IN, // iese cu accelerare, sincron cu intrarea gri
             }}
           >
             <motion.img
-              key={`base-img-${index}`}
+              initial={false} // <- important: nu re-rulează 'initial' la schimbarea src
               src={IMAGES[index]}
               alt=""
               aria-hidden
               draggable={false}
               style={{ objectPosition: getPos(index, isMd) }}
               className="absolute inset-0 h-full w-full object-cover select-none transform-gpu will-change-transform"
-              initial={{ scale: baseScale }}
-              animate={{ scale: phase ? 1 : baseScale }}
+              // zoom lent spre ENTER_SCALE cât timp stăm pe cadru; în 'reveal' rămâne pe baseScale (vezi handoff)
+              animate={{
+                scale:
+                  phase === null || phase === "enter" ? ENTER_SCALE : baseScale,
+              }}
               transition={{
                 scale: {
-                  duration: phase === "enter" ? SLIDE_IN_MS / 1000 : 0.001,
-                  ease: [0.22, 1, 0.36, 1],
+                  duration:
+                    phase === null
+                      ? Math.max(0, (DWELL_MS - LEAD_MS) / 1000)
+                      : 0.001,
+                  ease: "linear",
                 },
               }}
             />
           </motion.div>
 
-          {/* Overlay */}
+          {/* Overlay (intrare + reveal) */}
           {nextIdx !== null && (
             <motion.div
               key={`stage-${nextIdx}`}
@@ -142,15 +167,15 @@ export default function Home() {
               animate={{ x: "0%" }}
               transition={{
                 duration: prefersReducedMotion ? 0.3 : SLIDE_IN_MS / 1000,
-                ease: [0.22, 1, 0.36, 1],
+                ease: EASE_IN, // intră cu accelerare
               }}
               onAnimationComplete={() => {
-                if (!prefersReducedMotion && phase === "enter")
-                  setPhase("reveal");
+                // imediat ce a terminat intrarea → începe reveal (fără pauză)
+                if (!prefersReducedMotion) setPhase("reveal");
               }}
             >
               {/* strat întunecat */}
-              <img
+              <motion.img
                 src={IMAGES[nextIdx]}
                 alt=""
                 aria-hidden
@@ -162,7 +187,7 @@ export default function Home() {
                 }}
               />
 
-              {/* Reveal */}
+              {/* Reveal (decelerează pentru aterizare lină) */}
               {!prefersReducedMotion && phase === "reveal" && (
                 <motion.img
                   key={`wipe-${nextIdx}`}
@@ -182,18 +207,20 @@ export default function Home() {
                   transition={{
                     clipPath: {
                       duration: REVEAL_MS / 1000,
-                      ease: [0.22, 1, 0.36, 1],
+                      ease: EASE_OUT, // decelerare stabilă
                     },
                     scale: {
                       duration: REVEAL_MS / 1000,
-                      ease: [0.22, 1, 0.36, 1],
+                      ease: EASE_OUT, // decelerare stabilă
                     },
                   }}
                   onAnimationComplete={() => {
-                    setIndex(nextIdx);
+                    // handoff ordonat: întâi scara, apoi schimbăm imaginea
                     setBaseScale(ZOOM_REVEAL_TO);
+                    setIndex(nextIdx!);
                     setNextIdx(null);
                     setPhase(null);
+                    scheduleNext(); // următorul ciclu după pauză
                   }}
                   style={{
                     willChange: "clip-path, transform",
@@ -215,10 +242,11 @@ export default function Home() {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.4 }}
                   onAnimationComplete={() => {
-                    setIndex(nextIdx);
                     setBaseScale(1);
+                    setIndex(nextIdx!);
                     setNextIdx(null);
                     setPhase(null);
+                    scheduleNext();
                   }}
                 />
               )}
@@ -228,14 +256,15 @@ export default function Home() {
       </section>
 
       {/* 🔽 Bară descriere – full-bleed, sincronizată cu poza */}
-      {/* <section
+      {/*
+      <section
         className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]
                    bg-muted text-neutral-900 overflow-hidden"
         aria-live="polite"
       >
-        // ca să nu sară înălțimea când se schimbă textul 
-        <div className="relative min-h-[56px] md:min-h-[68px]">
-          //caption pentru imaginea curentă (baza) 
+        // ca să nu sară înălțimea când se schimbă textul
+        <div className="relative min-h[56px] md:min-h-[68px]">
+          // caption pentru imaginea curentă (baza)
           {!prefersReducedMotion ? (
             <>
               <motion.div
@@ -260,7 +289,7 @@ export default function Home() {
                 </div>
               </motion.div>
 
-              // caption pentru poza care intră *
+              // caption pentru poza care intră
               {nextIdx !== null && (
                 <motion.div
                   key={`cap-next-${nextIdx}`}
@@ -307,7 +336,8 @@ export default function Home() {
             </motion.div>
           )}
         </div>
-      </section> */}
+      </section>
+      */}
 
       {/* Collab + Carduri */}
       <Hero />

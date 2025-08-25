@@ -7,6 +7,7 @@ const CATS = [
   { label: "Press", slug: "press" },
   { label: "Corporate", slug: "corporate" },
   { label: "Concert", slug: "concert" },
+  { label: "Contact", slug: "contact" },
 ];
 
 const Navbar = () => {
@@ -36,11 +37,11 @@ const Navbar = () => {
         className={[
           "transition-all duration-300",
           scrolled
-            ? "backdrop-blur-md shadow-sm border-black/10 opacity-80"
+            ? " shadow-sm border-black/10 opacity-80 backdrop-blur-md"
             : "bg-gradient-to-b from-black/50 via-black/20 to-transparent",
           textClass,
           menuOpen
-            ? "shadow-sm bg-[var(--bg-muted)]/80 text-neutral-900"
+            ? "shadow-sm bg-[var(--bg-muted)]/80 text-neutral-900 backdrop-blur-md"
             : "bg-gradient-to-b from-black/50 via-black/20 to-transparent",
         ].join(" ")}
         style={scrolled ? { backgroundColor: "var(--bg-muted)" } : undefined}
@@ -113,7 +114,7 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="px-4 py-3 space-y-2 text-center backdrop-blur-md"
+            className="px-4 py-20 space-y-10 text-center backdrop-blur-md "
             // același fundal ca overlay-ul din navbar, la ~80% opacitate
             style={{
               backgroundColor: "rgba(var(--bg-muted-rgb,245,245,245),0.8)",
@@ -125,7 +126,7 @@ const Navbar = () => {
                 key={slug}
                 to={`/?cat=${slug}`}
                 onClick={() => setMenuOpen(false)}
-                className="block font-bold tracking-wide hover:bg-white/60"
+                className="block font-bold tracking-wide"
               >
                 {label}
               </Link>
