@@ -27,14 +27,14 @@ const IMAGES = [
 ];
 
 // 🔤 CAPS pentru fiecare imagine (schimbă-le după cum vrei)
-const CAPTIONS: { title: string; desc?: string }[] = [
-  {
-    title: "Official visit at Cotroceni Palace",
-    desc: "Press coverage & arrivals",
-  },
-  { title: "Field exercise with allied forces", desc: "Editorial selection" },
-  { title: "Cristianoooo Ronaldoooooo", desc: "Siuuuuu" },
-];
+// const CAPTIONS: { title: string; desc?: string }[] = [
+//   {
+//     title: "Official visit at Cotroceni Palace",
+//     desc: "Press coverage & arrivals",
+//   },
+//   { title: "Field exercise with allied forces", desc: "Editorial selection" },
+//   { title: "Cristianoooo Ronaldoooooo", desc: "Siuuuuu" },
+// ];
 
 // —— Timings ——
 const CYCLE_MS = 3000;
@@ -92,7 +92,7 @@ export default function Home() {
     <>
       {/* full-bleed, fără alb sus/lateral; 66dvh mobile / 90dvh desktop */}
       <section
-        className="relative w-screen h-[66dvh] md:h-[90dvh] overflow-hidden isolate
+        className="relative w-screen h-[66dvh] md:h-[105dvh] overflow-hidden isolate
                    left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]
                    [margin-block-start:-35px] bg-black"
       >
@@ -228,14 +228,14 @@ export default function Home() {
       </section>
 
       {/* 🔽 Bară descriere – full-bleed, sincronizată cu poza */}
-      <section
+      {/* <section
         className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]
                    bg-muted text-neutral-900 overflow-hidden"
         aria-live="polite"
       >
-        {/* ca să nu sară înălțimea când se schimbă textul */}
+        // ca să nu sară înălțimea când se schimbă textul 
         <div className="relative min-h-[56px] md:min-h-[68px]">
-          {/* caption pentru imaginea curentă (baza) */}
+          //caption pentru imaginea curentă (baza) 
           {!prefersReducedMotion ? (
             <>
               <motion.div
@@ -260,7 +260,7 @@ export default function Home() {
                 </div>
               </motion.div>
 
-              {/* caption pentru poza care intră */}
+              // caption pentru poza care intră *
               {nextIdx !== null && (
                 <motion.div
                   key={`cap-next-${nextIdx}`}
@@ -307,7 +307,7 @@ export default function Home() {
             </motion.div>
           )}
         </div>
-      </section>
+      </section> */}
 
       {/* Collab + Carduri */}
       <Hero />

@@ -119,7 +119,6 @@ export default function Hero() {
                 className={[
                   // pe mobil: mereu color; pe desktop: grayscale la hover
                   "object-contain transition duration-300",
-                  "md:grayscale md:hover:grayscale-0 md:opacity-80 md:hover:opacity-100",
                   // mărime diferită pt cele marcate `big`
                   c.big ? "h-14 md:h-16" : "h-8 md:h-10",
                 ].join(" ")}
@@ -139,12 +138,16 @@ export default function Hero() {
           Work
         </motion.h2>
 
-        <div className="mt-8 md:mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-          {WORK.map((w, i) => {
-            const Card = (
-              <article className="group rounded-xl overflow-hidden bg-white border border-neutral-200 shadow-sm hover:shadow-md transition-shadow">
-                {/* imaginea (3:2) */}
-                <div className="relative w-full pt-[66.666%] overflow-hidden">
+        {/* === PRIMELE 4: full-bleed, margini minime, carduri mai înalte (4:3) === */}
+        <div className="mt-8 md:mt-12 w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-[2px] md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+            {WORK.slice(0, 4).map((w, i) => (
+              <article
+                key={`first-${i}`}
+                className="group  overflow-hidden bg-white border border-neutral-200 shadow-sm hover:shadow-md transition-shadow"
+              >
+                {/* imaginea (4:3) – mai înaltă decât 3:2 */}
+                <div className="relative w-full pt-[75%] overflow-hidden">
                   <img
                     src={w.src}
                     alt={w.alt}
@@ -152,7 +155,7 @@ export default function Hero() {
                     className="absolute inset-0 w-full h-full object-cover transform-gpu transition duration-500 group-hover:scale-[1.02]"
                   />
 
-                  {/* overlay GRADIENT + text (DESKTOP doar la hover) */}
+                  {/* overlay desktop la hover */}
                   <div
                     aria-hidden
                     className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent
@@ -174,7 +177,52 @@ export default function Hero() {
                   </div>
                 </div>
 
-                {/* descriere SUB poză (MOBIL), ascunsă pe desktop */}
+                {/* descriere pe mobil sub poză */}
+                <div className="p-4 md:p-5 md:hidden">
+                  <h3 className="text-base font-semibold leading-snug">
+                    {w.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-neutral-600">{w.desc}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        {/* === RESTUL cardurilor – păstrezi gridul tău actual === */}
+        <div className="mt-8 md:mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+          {WORK.slice(4).map((w, i) => {
+            const Card = (
+              <article className="group rounded-xl overflow-hidden bg-white border border-neutral-200 shadow-sm hover:shadow-md transition-shadow">
+                {/* imaginea (3:2) – cum aveai */}
+                <div className="relative w-full pt-[66.666%] overflow-hidden">
+                  <img
+                    src={w.src}
+                    alt={w.alt}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover transform-gpu transition duration-500 group-hover:scale-[1.02]"
+                  />
+                  <div
+                    aria-hidden
+                    className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent
+                         opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <div
+                    className="hidden md:flex absolute inset-x-0 bottom-0 p-5 translate-y-3 opacity-0
+                         group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                  >
+                    <div className="text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
+                      <h3 className="text-lg font-semibold leading-snug">
+                        {w.title}
+                      </h3>
+                      {w.desc && (
+                        <p className="mt-1 text-sm text-white/90">{w.desc}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* mobil */}
                 <div className="p-4 md:p-5 md:hidden">
                   <h3 className="text-base font-semibold leading-snug">
                     {w.title}
@@ -186,16 +234,16 @@ export default function Hero() {
 
             return w.href ? (
               <a
-                key={i}
+                key={`rest-${i}`}
                 href={w.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block focus:outline-none focus:ring-2 focus:ring-neutral-900/20 rounded-xl"
+                className="block focus:outline-none focus:ring-2 focus:ring-neutral-900/20"
               >
                 {Card}
               </a>
             ) : (
-              <div key={i}>{Card}</div>
+              <div key={`rest-${i}`}>{Card}</div>
             );
           })}
         </div>

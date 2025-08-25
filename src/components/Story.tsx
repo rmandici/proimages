@@ -8,7 +8,7 @@ export default function Story() {
     <section className="w-full">
       {/* Lead / descriere pe fundal gri deschis */}
       <div className="bg-[var(--bg-muted)]">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12">
+        <div className="container-tight max-w-5xl py-8 md:py-12">
           <p className="text-[17px] md:text-xl leading-7 md:leading-8 text-neutral-800 text-center">
             <strong>Eduard Vinatoru</strong> is an independent photojournalist,
             corporate and event photographer based in Bucharest, collaborating
@@ -20,25 +20,26 @@ export default function Story() {
         </div>
       </div>
 
-      {/* Galerie 2 coloane (prima și ultima = full width) */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {BODY_IMAGES.map((img, i) => (
+      {/* Galerie full-bleed: margini ~2px, 2 coloane peste tot,
+          prima & ultima = col-span-2 (mari) */}
+      <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-[2px] md:px-6 py-8 md:py-12">
+        <div className="grid grid-cols-2 gap-[2px] md:gap-6">
+          {BODY_IMAGES.map((img, i, arr) => (
             <figure
               key={img.src}
-              className={`overflow-hidden rounded-xl shadow-sm bg-white
-                          ${
-                            i === 0 || i === BODY_IMAGES.length - 1
-                              ? "md:col-span-2"
-                              : ""
-                          }`}
+              className={`overflow-hidden  bg-white ${
+                i === 0 || i === arr.length - 1 ? "col-span-2" : ""
+              }`}
             >
-              <img
-                src={img.src}
-                alt={img.alt}
-                loading="lazy"
-                className="w-full h-auto object-cover transition-transform duration-500 hover:scale-[1.01]"
-              />
+              {/* Raport 3:2 — schimbă la pt-[75%] pentru 4:3 sau pt-[56.25%] pentru 16:9 */}
+              <div className="relative w-full pt-[66.666%]">
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-[1.01]"
+                />
+              </div>
             </figure>
           ))}
         </div>

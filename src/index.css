@@ -12,6 +12,7 @@
   --color-white: #ffffff;
   --color-border: #2d2d2d;
   --bg-muted: theme("colors.neutral.100");
+  --bg-muted-rgb: 245, 245, 245; /* neutral-100 în RGB */
 }
 
 /* Stiluri de bază */
